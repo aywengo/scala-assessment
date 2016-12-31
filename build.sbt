@@ -13,6 +13,8 @@ libraryDependencies ++= {
   val akkaVersion     = "2.4.2"
   val scalaTestVersion = "2.2.3"
   val finatraVersion = "2.1.4"
+  val slickVersion = "3.1.1"
+  val logback = "1.1.7"
 
   Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
@@ -25,9 +27,14 @@ libraryDependencies ++= {
       ExclusionRule("asm") // exclude because of conflict creating test report with PegDown
     ),
 
-    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-    "com.typesafe.akka" %% "akka-slf4j"  % akkaVersion,
-    "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
+    "ch.qos.logback" % "logback-classic" % logback,
+
+
+    // DataBase Stack
+    "com.typesafe.slick" %% "slick" % slickVersion,
+     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
+     "com.h2database" % "h2" % "1.3.176",
+     "org.flywaydb" % "flyway-core" % "4.0",
 
       // Test
     "org.scalatest" % "scalatest_2.11" % scalaTestVersion % "test",
