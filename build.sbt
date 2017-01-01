@@ -37,12 +37,6 @@ libraryDependencies ++= {
     "com.twitter" %% "bijection-core" % bijectionVersion,
     "com.twitter" %% "bijection-util" % bijectionVersion,
 
-    // DataBase Stack
-    "com.typesafe.slick" %% "slick" % slickVersion,
-     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
-     "com.h2database" % "h2" % "1.3.176",
-     "org.flywaydb" % "flyway-core" % "4.0",
-
       // Test
     "org.scalatest" % "scalatest_2.11" % scalaTestVersion % "test",
     "org.pegdown" % "pegdown" % "1.4.2" % "test",         // needed by scalatest for html report

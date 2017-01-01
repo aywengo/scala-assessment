@@ -26,5 +26,15 @@ class PebbleActorTest extends TestKit(ActorSystem("PebbleActorTest")) with Impli
       expectMsg(Some(DataRow(new DateTime(2016, 5,25, 21, 22),120,0,4,9915,1,0)))
     }
 
+    "send back parsed entity with optional params" in {
+      actor ! PebbleInput("2016-05-25T21:22:00Z,,,,,,")
+      expectMsg(Some(DataRow(new DateTime(2016, 5,25, 21, 22),0,0,0,0,0,0)))
+    }
+
+    "send back parsed entity with optional params except activity" in {
+      actor ! PebbleInput("2016-05-25T21:22:00Z,,,,,,1")
+      expectMsg(Some(DataRow(new DateTime(2016, 5,25, 21, 22),0,0,0,0,0,1)))
+    }
+
   }
 }

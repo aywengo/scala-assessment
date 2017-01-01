@@ -1,28 +1,38 @@
 package melnyk.co.controllers
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
+import melnyk.co.middleware.PebbleActor
+import melnyk.co.model._
+import melnyk.co.utils.AkkaExtensions
+import com.twitter.finatra.utils.FuturePools
 
 import scala.concurrent.duration._
-import melnyk.co.middleware.PebbleActor
-import melnyk.co.model.{DataRow, PebbleInput}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.implicitConversions
 
-import com.twitter.bijection.Conversion._
-import com.twitter.bijection.twitter_util.UtilBijections.twitter2ScalaFuture
-import com.twitter.util.{Future => TwitterFuture}
-import scala.concurrent.{Future => ScalaFuture}
-
-class CollectorController extends Controller{
+class CollectorController extends Controller with AkkaExtensions{
   val system = ActorSystem("PebbleCollectorAS")
-  val middleWare = system.actorOf(Props[PebbleActor])
+  val middleWare: ActorRef = system.actorOf(Props[PebbleActor])
+  private val futurePool = FuturePools.unboundedPool("CallbackConverter")
 
   implicit val timeout = Timeout(30.seconds)
-  def toTwitterFuture(in: ScalaFuture[Any]): TwitterFuture[Any] = in.as[TwitterFuture[Any]]
 
   post("/import") { req: PebbleInput =>
-    toTwitterFuture(middleWare ? req)
+    ->(middleWare ? req)
+  }
+
+  get("/data"){ _: Request =>
+    futurePool {
+      List(
+        DataRow.fromInput("2016-05-25T21:22:00Z,120,0,4,9915,1,0"),
+        DataRow.fromInput("2016-05-25T21:23:00Z,10,0,4,9915,1,0"),
+        DataRow.fromInput("2016-05-25T21:24:00Z,20,0,4,9915,1,0"),
+        DataRow.fromInput("2016-05-25T21:25:00Z,12,0,4,9915,1,0"),
+        DataRow.fromInput("2016-05-25T21:26:00Z,,,1,,1,0")
+      )
+    }
   }
 }
