@@ -13,6 +13,7 @@ libraryDependencies ++= {
   val akkaVersion     = "2.4.2"
   val scalaTestVersion = "2.2.3"
   val finatraVersion = "2.1.4"
+  val bijectionVersion = "0.9.4"
   val slickVersion = "3.1.1"
   val logback = "1.1.7"
 
@@ -26,9 +27,15 @@ libraryDependencies ++= {
     "com.twitter" %% "finagle-stats" % "6.33.0" excludeAll(
       ExclusionRule("asm") // exclude because of conflict creating test report with PegDown
     ),
-
     "ch.qos.logback" % "logback-classic" % logback,
 
+    // Akka Actors
+    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
+
+    // Bijection
+    "com.twitter" %% "bijection-core" % bijectionVersion,
+    "com.twitter" %% "bijection-util" % bijectionVersion,
 
     // DataBase Stack
     "com.typesafe.slick" %% "slick" % slickVersion,

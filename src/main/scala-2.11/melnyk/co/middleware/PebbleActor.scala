@@ -1,8 +1,10 @@
 package melnyk.co.middleware
 
-/**
-  * Created by Roman Melnyk (@aywengo) on 31.12.16.
-  */
-class PebbleActor {
+import akka.actor.Actor
+import melnyk.co.model.{DataRow, PebbleInput}
 
+class PebbleActor extends Actor {
+  override def receive: Receive = {
+    case PebbleInput(data) => sender() ! DataRow.fromInput(data)
+  }
 }
