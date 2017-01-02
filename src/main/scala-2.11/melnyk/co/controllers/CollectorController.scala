@@ -25,8 +25,8 @@ class CollectorController @Inject() (@Named("middleware") actor: ActorRef,
     -?>(actor,req)
   }
 
-  patch("/trace") { req: PebbleInput =>
-    -!>(actor,req.data)
+  put("/trace") { req: Trace =>
+    -!>(actor,req)
   }
 
   get("/data"){ _: Request =>

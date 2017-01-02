@@ -1,12 +1,18 @@
+import com.google.inject.testing.fieldbinder.Bind
 import com.twitter.finagle.http.Status._
 import com.twitter.finatra.http.test.EmbeddedHttpServer
+import com.twitter.inject.Mockito
 import com.twitter.inject.server.FeatureTest
 import melnyk.co.Server
 import melnyk.co.model.DataRow
+import melnyk.co.services.DalService
 
-class CollectorTest extends FeatureTest {
+
+class CollectorFeatureTest extends FeatureTest with Mockito {
 
   override val server = new EmbeddedHttpServer(new Server)
+
+  @Bind val dalService = smartMock[DalService]
 
   "Server" should {
     "Accept import Post" in {
@@ -18,11 +24,26 @@ class CollectorTest extends FeatureTest {
       )
     }
 
+    "Accept trace Put" in {
+      server.httpPut(
+        path = "/trace",
+        putBody =
+          """
+            |{
+            |   "log" : "Log entry"
+            |}
+            | """.stripMargin,
+        andExpect = Ok
+      )
+    }
+
     "Returns collection" in {
+      dalService.fetchData returns List(DataRow.fromInput("2016-05-25T21:22:00Z,120,0,4,9915,1,0"))
+
       server.httpGetJson[List[DataRow]](
         path = "/data",
         andExpect = Ok,
-        withJsonBody = """[{"time":"2016-05-25T21:22:00.000Z","steps":120,"yaw":0,"pitch":4,"vmc":9915,"light":1,"activity":0},{"time":"2016-05-25T21:23:00.000Z","steps":10,"yaw":0,"pitch":4,"vmc":9915,"light":1,"activity":0},{"time":"2016-05-25T21:24:00.000Z","steps":20,"yaw":0,"pitch":4,"vmc":9915,"light":1,"activity":0},{"time":"2016-05-25T21:25:00.000Z","steps":12,"yaw":0,"pitch":4,"vmc":9915,"light":1,"activity":0},{"time":"2016-05-25T21:26:00.000Z","steps":0,"yaw":0,"pitch":1,"vmc":0,"light":1,"activity":0}]"""
+        withJsonBody = """[{"activity":0,"light":1,"pitch":4,"steps":120,"time":"2016-05-25T21:22:00.000Z","vmc":9915,"yaw":0}]"""
       )
     }
   }
