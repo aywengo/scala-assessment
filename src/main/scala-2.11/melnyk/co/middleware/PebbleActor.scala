@@ -1,10 +1,15 @@
 package melnyk.co.middleware
 
 import akka.actor.Actor
-import melnyk.co.model.{DataRow, PebbleInput}
+import com.twitter.inject.Logging
+import melnyk.co.model.{DataRow, PebbleInput, Trace}
 
-class PebbleActor extends Actor {
+import scala.language.implicitConversions
+
+class PebbleActor extends Actor with Logging {
   override def receive: Receive = {
     case PebbleInput(data) => sender() ! DataRow.fromInput(data)
+    case Trace(in) => info(s"Got request to trace: $in"); sender() ! in
+    case _ => error("Unpredicted handler in PebbleActor")
   }
 }

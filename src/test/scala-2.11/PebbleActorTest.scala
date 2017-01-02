@@ -2,7 +2,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
 import melnyk.co.middleware.PebbleActor
-import melnyk.co.model.{DataRow, PebbleInput}
+import melnyk.co.model.{DataRow, PebbleInput, Trace}
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -34,6 +34,11 @@ class PebbleActorTest extends TestKit(ActorSystem("PebbleActorTest")) with Impli
     "send back parsed entity with optional params except activity" in {
       actor ! PebbleInput("2016-05-25T21:22:00Z,,,,,,1")
       expectMsg(Some(DataRow(new DateTime(2016, 5,25, 21, 22),0,0,0,0,0,1)))
+    }
+
+    "send trace" in {
+      actor ! Trace("Hallo")
+      expectMsg("Hallo")
     }
 
   }

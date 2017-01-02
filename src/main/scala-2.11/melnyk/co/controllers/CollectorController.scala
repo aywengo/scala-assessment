@@ -1,38 +1,37 @@
 package melnyk.co.controllers
 
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.pattern.ask
-import akka.util.Timeout
+import javax.inject.{Inject, Singleton}
+
+import akka.actor.ActorRef
+import com.google.inject.name.Named
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.Controller
-import melnyk.co.middleware.PebbleActor
-import melnyk.co.model._
-import melnyk.co.utils.AkkaExtensions
 import com.twitter.finatra.utils.FuturePools
+import melnyk.co.model._
+import melnyk.co.services.DalService
+import melnyk.co.utils.AkkaExtensions
 
-import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
 
-class CollectorController extends Controller with AkkaExtensions{
-  val system = ActorSystem("PebbleCollectorAS")
-  val middleWare: ActorRef = system.actorOf(Props[PebbleActor])
+@Singleton
+class CollectorController @Inject() (@Named("middleware") actor: ActorRef,
+                                     dal: DalService)
+  extends Controller with AkkaExtensions{
+
   private val futurePool = FuturePools.unboundedPool("CallbackConverter")
 
-  implicit val timeout = Timeout(30.seconds)
-
   post("/import") { req: PebbleInput =>
-    ->(middleWare ? req)
+    -?>(actor,req)
+  }
+
+  patch("/trace") { req: PebbleInput =>
+    -!>(actor,req.data)
   }
 
   get("/data"){ _: Request =>
     futurePool {
-      List(
-        DataRow.fromInput("2016-05-25T21:22:00Z,120,0,4,9915,1,0"),
-        DataRow.fromInput("2016-05-25T21:23:00Z,10,0,4,9915,1,0"),
-        DataRow.fromInput("2016-05-25T21:24:00Z,20,0,4,9915,1,0"),
-        DataRow.fromInput("2016-05-25T21:25:00Z,12,0,4,9915,1,0"),
-        DataRow.fromInput("2016-05-25T21:26:00Z,,,1,,1,0")
-      )
+      dal.fetchData()
     }
   }
 }

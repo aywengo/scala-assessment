@@ -1,12 +1,15 @@
 package melnyk.co.model
 
 import com.twitter.finatra.request.FormParam
+import com.twitter.inject.Logging
 import org.joda.time.{DateTime, DateTimeZone}
 
 
 case class PebbleInput(
   @FormParam data:String
                       )
+
+case class Trace(log:String)
 case class DataRow(
                   time: DateTime, //absolute time of the line, in UTC time zone
                   steps: Int = 0, //number of steps taken in the given minute (120 in this example)
@@ -16,7 +19,7 @@ case class DataRow(
                   light: Int = 0, //ambient light level, from 1 (darkest) to 4 (brightest) with 0 meaning unknown
                   activity: Int = 0 //activity mask, currently 3 for deep sleep, 1 for non-deep sleep or 0 for not sleeping.
                   )
-object DataRow {
+object DataRow extends Logging{
   private val pattern = """(^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:.\d{1,3})?Z),(\d*),(\d*),(\d*),(\d*),(\d*),(\d*)""".r
 
 
