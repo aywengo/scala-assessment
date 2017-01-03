@@ -22,11 +22,5 @@ of the original [Akka](http://www.akka.io) application as possible.
 ## Question
 
 * How would you integrate Finatra and Akka ?
-    - TwitterFuture => ScalaFutureConversion
-    - FuturePool usage for blocking operations
 * Implement an endpoint which uses an Akka actor.
-    - use ask pattern
-    - error handling
 * Write an integration test for the endpoint using ScalaTest.
-    - mock module
-    - mock Actor

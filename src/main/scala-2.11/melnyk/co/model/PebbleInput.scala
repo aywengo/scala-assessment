@@ -4,10 +4,7 @@ import com.twitter.finatra.request.FormParam
 import com.twitter.inject.Logging
 import org.joda.time.{DateTime, DateTimeZone}
 
-
-case class PebbleInput(
-  @FormParam data:String
-                      )
+case class PebbleInput(@FormParam data:String)
 
 case class Trace(log:String)
 case class DataRow(

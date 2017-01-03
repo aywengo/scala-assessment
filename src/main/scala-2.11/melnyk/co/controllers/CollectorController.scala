@@ -15,8 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
 
 @Singleton
-class CollectorController @Inject() (@Named("middleware") actor: ActorRef,
-                                     dal: DalService)
+class CollectorController @Inject() (@Named("middleware") actor: ActorRef, dal: DalService)
   extends Controller with AkkaExtensions{
 
   private val futurePool = FuturePools.unboundedPool("CallbackConverter")
