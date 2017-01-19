@@ -1,4 +1,4 @@
-import akka.actor.ActorRef
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.twitter.inject.IntegrationTest
@@ -18,8 +18,10 @@ class CollectorIntegrationTest extends IntegrationTest {
   "ActorModule" should {
     "be instant with TestInjector" in {  // test health check
       val actor = injector.instance[ActorRef]("middleware")
+      val actorSystem = injector.instance[ActorSystem]("ActorSystem")
 
       actor should be(an[ActorRef])
+      actorSystem should be(an[ActorSystem])
     }
 
     "send back parsed entity" in {
